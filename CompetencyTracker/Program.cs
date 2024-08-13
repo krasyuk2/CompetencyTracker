@@ -8,10 +8,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PersonDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection")));
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var service = scope.ServiceProvider.GetRequiredService<PersonDbContext>();
+    await service.Database.MigrateAsync();
+}
 
 if (app.Environment.IsDevelopment())
 {
