@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
-
+﻿
 namespace CompetencyTracker.Models;
 
 public class Person

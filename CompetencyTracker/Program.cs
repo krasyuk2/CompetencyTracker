@@ -1,5 +1,6 @@
 using CompetencyTracker.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PersonDbContext>(options =>
     options.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection")));
+
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+{
+    loggerConfiguration
+        .WriteTo.Console()
+        .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day);
+});
 
 var app = builder.Build();
 

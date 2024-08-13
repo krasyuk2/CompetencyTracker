@@ -3,6 +3,7 @@
 volumes:
   postgres-data:
 
+
 services:
   postgres:
     image: postgres
@@ -30,3 +31,5 @@ services:
       - DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=password;Database=database
     ports:
       - "8080:80"
+    volumes:
+      - ./logs:/app/logs

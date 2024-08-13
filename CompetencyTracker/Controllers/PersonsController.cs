@@ -12,10 +12,12 @@ namespace CompetencyTracker.Controllers;
 public class PersonsController : Controller
 {
     private readonly PersonDbContext _context;
+    private ILogger<PersonsController> _logger;
 
-    public PersonsController(PersonDbContext context)
+    public PersonsController(PersonDbContext context, ILogger<PersonsController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
     [HttpGet]
@@ -31,6 +33,7 @@ public class PersonsController : Controller
 
         if (person == null)
         {
+            _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
 
@@ -40,6 +43,11 @@ public class PersonsController : Controller
     [HttpPost]
     public async Task<ActionResult<PersonDto>> PostPerson(PersonDto createPersonDto)
     {
+        if (!ModelState.IsValid)
+        {
+            _logger.LogError($"Model validation errors: {ModelState}");
+            return BadRequest();
+        }
         var person = new Person
         {
             Name = createPersonDto.Name,
@@ -50,9 +58,17 @@ public class PersonsController : Controller
                 Level = s.Level
             }).ToList()
         };
-
-        _context.Persons.Add(person);
-        await _context.SaveChangesAsync();
+        try
+        {
+            _context.Persons.Add(person);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error adding person");
+            return StatusCode(500);
+        }
+       
 
       
 
@@ -61,10 +77,12 @@ public class PersonsController : Controller
     [HttpPut("{id}")]
     public async Task<IActionResult> PutPerson(long id, PersonDto updatePersonDto)
     {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
         var person = await _context.Persons.Include(p => p.Skills).FirstOrDefaultAsync(p => p.Id == id);
 
         if (person == null)
         {
+            _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
 
@@ -86,6 +104,7 @@ public class PersonsController : Controller
         var person = await _context.Persons.FindAsync(id);
         if (person == null)
         {
+            _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
 
