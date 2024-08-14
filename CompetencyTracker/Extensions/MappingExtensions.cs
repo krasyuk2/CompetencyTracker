@@ -23,5 +23,4 @@ public static class MappingExtensions
             Level = skill.Level
         };
     }
-
 }

@@ -3,7 +3,6 @@
 volumes:
   postgres-data:
 
-
 services:
   postgres:
     image: postgres
@@ -12,11 +11,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: database
-    ports:
-      - "5432:5432"
+      POSTGRES_DB: tracker
     healthcheck:
-      test: "pg_isready -U postgres -d database"
+      test: "pg_isready -U postgres -d tracker"
       interval: 5s
       timeout: 5s
       retries: 3
@@ -27,8 +24,8 @@ services:
         condition: service_healthy
     environment:
       - ASPNETCORE_URLS=http://+:80
-      - ASPNETCORE_ENVIRONMENT=Development
-      - DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=password;Database=database
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=password;Database=tracker
+      - UseSwagger=true
     ports:
       - "8080:80"
     volumes:

@@ -9,7 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PersonDbContext>(options =>
-    options.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
 {
@@ -22,11 +22,12 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var service = scope.ServiceProvider.GetRequiredService<PersonDbContext>();
-    await service.Database.MigrateAsync();
+     var service = scope.ServiceProvider.GetRequiredService<PersonDbContext>();
+     service.Database.Migrate();
 }
 
-if (app.Environment.IsDevelopment())
+var useSwagger = builder.Configuration.GetValue<bool>("UseSwagger");
+if (app.Environment.IsDevelopment() || useSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -26,6 +26,7 @@ public class PersonsController : Controller
         var persons = await _context.Persons.Include(p => p.Skills).ToListAsync();
         return persons.Select(p => p.ToDto()).ToList();
     }
+
     [HttpGet("{id}")]
     public async Task<ActionResult<PersonDto>> GetPerson(long id)
     {
@@ -38,8 +39,8 @@ public class PersonsController : Controller
         }
 
         return person.ToDto();
-
     }
+
     [HttpPost]
     public async Task<ActionResult<PersonDto>> PostPerson(PersonDto createPersonDto)
     {
@@ -48,6 +49,7 @@ public class PersonsController : Controller
             _logger.LogError($"Model validation errors: {ModelState}");
             return BadRequest();
         }
+
         var person = new Person
         {
             Name = createPersonDto.Name,
@@ -68,12 +70,10 @@ public class PersonsController : Controller
             _logger.LogError(e, "Error adding person");
             return StatusCode(500);
         }
-       
-
-      
-
+        
         return CreatedAtAction(nameof(GetPerson), new { id = person.Id }, person.ToDto());
     }
+
     [HttpPut("{id}")]
     public async Task<IActionResult> PutPerson(long id, PersonDto updatePersonDto)
     {
@@ -98,6 +98,7 @@ public class PersonsController : Controller
 
         return NoContent();
     }
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeletePerson(long id)
     {
@@ -113,14 +114,4 @@ public class PersonsController : Controller
 
         return NoContent();
     }
-   
 }
-
-   
-
-   
-    
-    
-    
-    
-
