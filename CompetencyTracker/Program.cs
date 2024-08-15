@@ -1,4 +1,7 @@
 using CompetencyTracker.DataAccess;
+using CompetencyTracker.Middleware;
+using CompetencyTracker.Services;
+using CompetencyTracker.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -7,6 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IPersonService, PersonService>();
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<GlobalExceptionFilter>();
+});
 
 builder.Services.AddDbContext<PersonDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -19,7 +29,6 @@ builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
 });
 
 var app = builder.Build();
-
 using (var scope = app.Services.CreateScope())
 {
      var service = scope.ServiceProvider.GetRequiredService<PersonDbContext>();
@@ -34,7 +43,6 @@ if (app.Environment.IsDevelopment() || useSwagger)
 }
 
 app.UseAuthorization();
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.MapControllers();
-
 app.Run();
