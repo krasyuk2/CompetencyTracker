@@ -1,15 +1,19 @@
-﻿using CompetencyTracker.Contracts;
+﻿using CompetencyTracker.Application.Contracts;
+using CompetencyTracker.Application.Extensions;
+using CompetencyTracker.Application.Services;
 using CompetencyTracker.Core.Abstractions;
-using CompetencyTracker.Extensions;
-using CompetencyTracker.Models;
-using CompetencyTracker.Services.Interfaces;
+using CompetencyTracker.Core.Models;
 
 namespace CompetencyTracker.Services;
 
 public class PersonService : IPersonService
 {
-    private IPersonRepository _personRepository;
-    public PersonService(IPersonRepository personRepository) => _personRepository = personRepository;
+    private readonly IPersonRepository _personRepository;
+
+    public PersonService(IPersonRepository personRepository)
+    {
+        _personRepository = personRepository;
+    }
 
     public async Task<IEnumerable<PersonDto>> GetPersons()
     {
@@ -56,12 +60,11 @@ public class PersonService : IPersonService
         if (personResponse == null) return null;
         return personResponse.ToDto();
     }
-    
+
     public async Task<Person?> DeletePerson(long id)
     {
-       var person = await _personRepository.DeletePerson(id);
-       if (person == null) return null;
-       return person;
+        var person = await _personRepository.DeletePerson(id);
+        if (person == null) return null;
+        return person;
     }
 }
-  

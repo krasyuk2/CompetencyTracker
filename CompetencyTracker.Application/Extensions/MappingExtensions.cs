@@ -1,7 +1,7 @@
-﻿using CompetencyTracker.Contracts;
-using CompetencyTracker.Models;
+﻿using CompetencyTracker.Application.Contracts;
+using CompetencyTracker.Core.Models;
 
-namespace CompetencyTracker.Extensions;
+namespace CompetencyTracker.Application.Extensions;
 
 public static class MappingExtensions
 {
@@ -15,6 +15,7 @@ public static class MappingExtensions
             Skills = person.Skills.Select(s => s.ToDto()).ToList()
         };
     }
+
     public static SkillDto ToDto(this Skill skill)
     {
         return new SkillDto

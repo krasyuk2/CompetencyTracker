@@ -1,5 +1,6 @@
 ﻿using CompetencyTracker.Core.Abstractions;
-using CompetencyTracker.Models;
+using CompetencyTracker.Core.Models;
+using CompetencyTracker.DataAccess.DataAccess;
 using Microsoft.EntityFrameworkCore;
 
 namespace CompetencyTracker.DataAccess.Repositories;
@@ -7,7 +8,11 @@ namespace CompetencyTracker.DataAccess.Repositories;
 public class PersonRepository : IPersonRepository
 {
     private readonly PersonDbContext _context;
-    public PersonRepository(PersonDbContext context) => _context = context;
+
+    public PersonRepository(PersonDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<IEnumerable<Person>> GetAllPersonAsync()
     {
@@ -38,13 +43,13 @@ public class PersonRepository : IPersonRepository
             .Include(p => p.Skills)
             .FirstOrDefaultAsync(p => p.Id == id);
         if (person == null) return null;
-        
+
         person.Name = model.Name;
         person.DisplayName = model.DisplayName;
         person.Skills = model.Skills.Select(s => new Skill
         {
             Name = s.Name,
-            Level = (byte)s.Level
+            Level = s.Level
         }).ToList();
 
         await _context.SaveChangesAsync();
@@ -55,7 +60,7 @@ public class PersonRepository : IPersonRepository
     {
         var person = await _context.Persons.FindAsync(id);
         if (person == null) return null;
-        
+
         _context.Persons.Remove(person);
         await _context.SaveChangesAsync();
         return person;

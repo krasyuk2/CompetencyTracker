@@ -1,5 +1,5 @@
-﻿using CompetencyTracker.Contracts;
-using CompetencyTracker.Services.Interfaces;
+﻿using CompetencyTracker.Application.Contracts;
+using CompetencyTracker.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CompetencyTracker.Controllers;
@@ -8,12 +8,11 @@ namespace CompetencyTracker.Controllers;
 [Route("api/v1/[controller]")]
 public class PersonsController(IPersonService personService, ILogger<PersonsController> logger) : Controller
 {
-    
     private readonly ILogger<PersonsController> _logger = logger;
     private readonly IPersonService _personService = personService;
-    
+
     /// <summary>
-    /// Возвращает список всех людей.
+    ///     Возвращает список всех людей.
     /// </summary>
     /// <returns>Список объектов PersonDto.</returns>
     [HttpGet]
@@ -21,12 +20,12 @@ public class PersonsController(IPersonService personService, ILogger<PersonsCont
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<PersonDto>>> GetPersons()
     {
-        var persons= await _personService.GetPersons();
+        var persons = await _personService.GetPersons();
         return Ok(persons);
     }
 
     /// <summary>
-    /// Возвращает информацию о человеке по его идентификатору.
+    ///     Возвращает информацию о человеке по его идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор человека.</param>
     /// <returns>Объект PersonDto, если найден, иначе NotFound.</returns>
@@ -37,17 +36,18 @@ public class PersonsController(IPersonService personService, ILogger<PersonsCont
     public async Task<ActionResult> GetPerson(long id)
     {
         var person = await _personService.GetPerson(id);
-        
+
         if (person == null)
         {
             _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
+
         return Ok(person);
     }
 
     /// <summary>
-    /// Создает нового человека.
+    ///     Создает нового человека.
     /// </summary>
     /// <param name="createPersonDto">Данные для создания нового человека.</param>
     /// <returns>Созданный объект PersonDto.</returns>
@@ -62,12 +62,13 @@ public class PersonsController(IPersonService personService, ILogger<PersonsCont
             _logger.LogError($"Model validation errors: {ModelState}");
             return BadRequest();
         }
+
         var person = await _personService.PostPerson(createPersonDto);
         return Ok(person);
     }
 
     /// <summary>
-    /// Обновляет информацию о человеке по его идентификатору.
+    ///     Обновляет информацию о человеке по его идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор человека, которого нужно обновить.</param>
     /// <param name="updatePersonDto">Данные для обновления.</param>
@@ -87,11 +88,12 @@ public class PersonsController(IPersonService personService, ILogger<PersonsCont
             _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
+
         return Ok("Person updated");
     }
 
     /// <summary>
-    /// Удаляет человека по его идентификатору.
+    ///     Удаляет человека по его идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор человека, которого нужно удалить.</param>
     /// <returns>Сообщение об успешном удалении или NotFound, если человек не найден.</returns>
@@ -107,6 +109,7 @@ public class PersonsController(IPersonService personService, ILogger<PersonsCont
             _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
+
         return Ok("Person deleted");
     }
 }

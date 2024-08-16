@@ -1,8 +1,8 @@
-﻿using CompetencyTracker.Models;
+﻿using CompetencyTracker.Core.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace CompetencyTracker.Configurations;
+namespace CompetencyTracker.DataAccess.Configurations;
 
 public class SkillConfiguration : IEntityTypeConfiguration<Skill>
 {

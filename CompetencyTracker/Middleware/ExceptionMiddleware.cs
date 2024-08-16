@@ -4,8 +4,8 @@ namespace CompetencyTracker.Middleware;
 
 public class ExceptionMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly RequestDelegate _next;
 
     public ExceptionMiddleware(RequestDelegate next, ILogger<ExceptionMiddleware> logger)
     {
@@ -31,7 +31,7 @@ public class ExceptionMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-        return context.Response.WriteAsync(new ErrorDetails()
+        return context.Response.WriteAsync(new ErrorDetails
         {
             StatusCode = context.Response.StatusCode,
             Message = "Internal Server Error."
