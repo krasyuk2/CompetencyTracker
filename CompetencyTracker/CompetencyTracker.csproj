@@ -19,13 +19,18 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+      <Folder Include="logs\" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="logs\" />
+      <ProjectReference Include="..\CompetencyTracker.Application\CompetencyTracker.Application.csproj" />
+      <ProjectReference Include="..\CompetencyTracker.DataAccess\CompetencyTracker.DataAccess.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
     </ItemGroup>
 
 </Project>

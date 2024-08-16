@@ -18,7 +18,9 @@ services:
       timeout: 5s
       retries: 3
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: CompetencyTracker/Dockerfile
     depends_on:
       postgres:
         condition: service_healthy

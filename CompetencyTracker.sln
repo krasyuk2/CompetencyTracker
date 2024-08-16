@@ -2,6 +2,17 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompetencyTracker", "CompetencyTracker\CompetencyTracker.csproj", "{96C02531-2365-47B3-AD0F-861C899D4671}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompetencyTracker.Core", "CompetencyTracker.Core\CompetencyTracker.Core.csproj", "{537CC64B-9ADC-42FE-B825-155B9E61B85B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompetencyTracker.Application", "CompetencyTracker.Application\CompetencyTracker.Application.csproj", "{F20AA87F-C2B7-491A-B206-7B439A8B6930}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompetencyTracker.DataAccess", "CompetencyTracker.DataAccess\CompetencyTracker.DataAccess.csproj", "{C4AF13AC-EF1D-435E-A8AC-E9C32C597B28}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{776CE933-03A3-48DC-B9F0-0D1177E850B0}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +23,19 @@ Global
 		{96C02531-2365-47B3-AD0F-861C899D4671}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96C02531-2365-47B3-AD0F-861C899D4671}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96C02531-2365-47B3-AD0F-861C899D4671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{537CC64B-9ADC-42FE-B825-155B9E61B85B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{537CC64B-9ADC-42FE-B825-155B9E61B85B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{537CC64B-9ADC-42FE-B825-155B9E61B85B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{537CC64B-9ADC-42FE-B825-155B9E61B85B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F20AA87F-C2B7-491A-B206-7B439A8B6930}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F20AA87F-C2B7-491A-B206-7B439A8B6930}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F20AA87F-C2B7-491A-B206-7B439A8B6930}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F20AA87F-C2B7-491A-B206-7B439A8B6930}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4AF13AC-EF1D-435E-A8AC-E9C32C597B28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AF13AC-EF1D-435E-A8AC-E9C32C597B28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AF13AC-EF1D-435E-A8AC-E9C32C597B28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AF13AC-EF1D-435E-A8AC-E9C32C597B28}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection
 EndGlobal
