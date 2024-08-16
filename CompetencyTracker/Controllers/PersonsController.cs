@@ -1,117 +1,112 @@
 ﻿using CompetencyTracker.Contracts;
-using CompetencyTracker.DataAccess;
-using CompetencyTracker.Extensions;
-using CompetencyTracker.Models;
+using CompetencyTracker.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace CompetencyTracker.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class PersonsController : Controller
+public class PersonsController(IPersonService personService, ILogger<PersonsController> logger) : Controller
 {
-    private readonly PersonDbContext _context;
-    private ILogger<PersonsController> _logger;
-
-    public PersonsController(PersonDbContext context, ILogger<PersonsController> logger)
-    {
-        _context = context;
-        _logger = logger;
-    }
-
+    
+    private readonly ILogger<PersonsController> _logger = logger;
+    private readonly IPersonService _personService = personService;
+    
+    /// <summary>
+    /// Возвращает список всех людей.
+    /// </summary>
+    /// <returns>Список объектов PersonDto.</returns>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<ActionResult<IEnumerable<PersonDto>>> GetPersons()
     {
-        var persons = await _context.Persons.Include(p => p.Skills).ToListAsync();
-        return persons.Select(p => p.ToDto()).ToList();
+        var persons= await _personService.GetPersons();
+        return Ok(persons);
     }
 
+    /// <summary>
+    /// Возвращает информацию о человеке по его идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор человека.</param>
+    /// <returns>Объект PersonDto, если найден, иначе NotFound.</returns>
     [HttpGet("{id}")]
-    public async Task<ActionResult<PersonDto>> GetPerson(long id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> GetPerson(long id)
     {
-        var person = await _context.Persons.Include(p => p.Skills).FirstOrDefaultAsync(p => p.Id == id);
-
+        var person = await _personService.GetPerson(id);
+        
         if (person == null)
         {
             _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
-
-        return person.ToDto();
+        return Ok(person);
     }
 
+    /// <summary>
+    /// Создает нового человека.
+    /// </summary>
+    /// <param name="createPersonDto">Данные для создания нового человека.</param>
+    /// <returns>Созданный объект PersonDto.</returns>
     [HttpPost]
-    public async Task<ActionResult<PersonDto>> PostPerson(PersonDto createPersonDto)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult> PostPerson(PersonDto createPersonDto)
     {
         if (!ModelState.IsValid)
         {
             _logger.LogError($"Model validation errors: {ModelState}");
             return BadRequest();
         }
-
-        var person = new Person
-        {
-            Name = createPersonDto.Name,
-            DisplayName = createPersonDto.DisplayName,
-            Skills = createPersonDto.Skills.Select(s => new Skill
-            {
-                Name = s.Name,
-                Level = s.Level
-            }).ToList()
-        };
-        try
-        {
-            _context.Persons.Add(person);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception e)
-        {
-            _logger.LogError(e, "Error adding person");
-            return StatusCode(500);
-        }
-        
-        return CreatedAtAction(nameof(GetPerson), new { id = person.Id }, person.ToDto());
+        var person = await _personService.PostPerson(createPersonDto);
+        return Ok(person);
     }
 
+    /// <summary>
+    /// Обновляет информацию о человеке по его идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор человека, которого нужно обновить.</param>
+    /// <param name="updatePersonDto">Данные для обновления.</param>
+    /// <returns>Сообщение об успешном обновлении или NotFound, если человек не найден.</returns>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PutPerson(long id, PersonDto updatePersonDto)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        var person = await _context.Persons.Include(p => p.Skills).FirstOrDefaultAsync(p => p.Id == id);
+        var person = await _personService.PutPerson(id, updatePersonDto);
 
         if (person == null)
         {
             _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
-
-        person.Name = updatePersonDto.Name;
-        person.DisplayName = updatePersonDto.DisplayName;
-        person.Skills = updatePersonDto.Skills.Select(s => new Skill
-        {
-            Name = s.Name,
-            Level = s.Level
-        }).ToList();
-
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        return Ok("Person updated");
     }
 
+    /// <summary>
+    /// Удаляет человека по его идентификатору.
+    /// </summary>
+    /// <param name="id">Идентификатор человека, которого нужно удалить.</param>
+    /// <returns>Сообщение об успешном удалении или NotFound, если человек не найден.</returns>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> DeletePerson(long id)
     {
-        var person = await _context.Persons.FindAsync(id);
+        var person = await _personService.DeletePerson(id);
         if (person == null)
         {
             _logger.LogError($"Person whit id {id} not found");
             return NotFound();
         }
-
-        _context.Persons.Remove(person);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
+        return Ok("Person deleted");
     }
 }
